@@ -12,6 +12,6 @@ export class AppController {
 
   @Get('/hi')
   getHi() {
-    return 'Hi';
+    return this.appService.getHi();
   }
 }
