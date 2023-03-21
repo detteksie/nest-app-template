@@ -1,9 +1,41 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { getConnectionOptions } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath:
+        process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test'
+          ? `.env.${process.env.NODE_ENV}`
+          : '.env',
+    }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        ttl: config.get<number>('THROTTLE_TTL') || 60,
+        limit: config.get<number>('THROTTLE_LIMIT') || 10,
+      }),
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async () => {
+        const connectionOptions = await getConnectionOptions();
+        // console.log('connectionOptions', connectionOptions);
+        return {
+          ...connectionOptions,
+          autoLoadEntities: true,
+        };
+      },
+    }),
+    UsersModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
