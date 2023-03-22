@@ -48,7 +48,13 @@ export class User {
   })
   picture: string;
 
-  @Column({ name: 'sex_type', nullable: true, default: 'Other' })
+  @Column({
+    name: 'sex_type',
+    nullable: true,
+    default: 'Unknown',
+    enum: ['Unknown', 'Male', 'Female', 'Other'],
+    type: 'enum',
+  })
   sexType: string;
 
   @Column({ type: 'date', nullable: true })
@@ -64,7 +70,7 @@ export class User {
       this.signature = nanoid(8);
       this.password = await bCryptHelper.hashPassword(this.password);
     } catch (err) {
-      throw new InternalServerErrorException('There are some issue before inserting');
+      throw new InternalServerErrorException('There is some issue before inserting');
     }
   }
 

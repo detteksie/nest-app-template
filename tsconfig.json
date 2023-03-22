@@ -1,22 +1,26 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ES2017",
+    "baseUrl": "./",
+    "outDir": "./build",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2017",
+    "esModuleInterop": true,
     "sourceMap": true,
-    "outDir": "./build",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "allowJs": true
+    "noFallthroughCasesInSwitch": false
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   }
 }

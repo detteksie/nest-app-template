@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { getConnectionOptions } from 'typeorm';
+import { DataSource, getConnectionOptions } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -32,6 +32,10 @@ import { UsersModule } from './users/users.module';
           ...connectionOptions,
           autoLoadEntities: true,
         };
+      },
+      dataSourceFactory: async (options) => {
+        const d = await new DataSource(options).initialize();
+        return d;
       },
     }),
     UsersModule,

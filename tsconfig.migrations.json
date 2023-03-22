@@ -1,12 +1,18 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./migrations",
+    "incremental": false,
+    "sourceMap": false,
+    "declaration": false
+  },
   "exclude": [
     "node_modules",
     "test",
     "build",
     "dist",
     "**/*spec.ts",
-    "migrations",
+    "src",
     "ormconfig.js",
     "ormconfig.ts"
   ]
