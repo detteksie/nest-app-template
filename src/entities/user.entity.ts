@@ -1,4 +1,5 @@
 import { InternalServerErrorException } from '@nestjs/common';
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { nanoid } from 'nanoid';
 import { BCryptHelper } from 'src/utils/hash.helper';
@@ -13,34 +14,44 @@ import {
 
 @Entity()
 export class User {
+  @ApiProperty()
   @PrimaryGeneratedColumn('increment', { type: 'bigint', unsigned: true })
   id: number;
 
+  @ApiProperty()
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
+  @ApiProperty()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
+  @ApiProperty()
   @Column({ unique: true })
   email: string;
 
+  @ApiProperty()
   @Column({ unique: true })
   username: string;
 
+  @ApiProperty()
   @Exclude()
   @Column()
   password: string;
 
+  @ApiProperty()
   @Column({ default: 'lorem-ipsum' })
   signature: string;
 
+  @ApiProperty()
   @Column({ name: 'is_admin', default: false })
   isAdmin: boolean;
 
+  @ApiProperty()
   @Column()
   name: string;
 
+  @ApiProperty()
   @Column({
     nullable: true,
     default:
@@ -48,6 +59,7 @@ export class User {
   })
   picture: string;
 
+  @ApiProperty()
   @Column({
     name: 'sex_type',
     nullable: true,
@@ -57,9 +69,11 @@ export class User {
   })
   sexType: string;
 
+  @ApiProperty()
   @Column({ type: 'date', nullable: true })
   birthdate: string;
 
+  @ApiProperty()
   @Column({ nullable: true })
   telephone: string;
 
