@@ -1,28 +1,30 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { BCryptHelper } from 'src/utils/hash.helper';
-import { Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { LoginReqDto } from './dto/login.req-dto';
 import { RegisterReqDto } from './dto/register.req-dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager,
     private readonly bCryptHelper: BCryptHelper,
     private readonly jwtService: JwtService,
   ) {}
 
   async register(registerDto: RegisterReqDto): Promise<User> {
-    const findEmailExist = this.usersRepository.findOne({
-      where: { email: registerDto.email.toLowerCase() },
-    });
-    const findUsernameExist = this.usersRepository.findOne({
-      where: { username: registerDto.username.toLowerCase() },
-    });
+    const userQuery = this.entityManager.createQueryBuilder(User, 'user');
+
+    const findEmailExist = userQuery
+      .where('email = :email', { email: registerDto.email.toLowerCase() })
+      .getOne();
+    const findUsernameExist = userQuery
+      .where('username = :username', { username: registerDto.username.toLowerCase() })
+      .getOne();
     const [isEmailExist, isUsernameExist] = await Promise.all([findEmailExist, findUsernameExist]);
 
     const existUserFields: string[] = [];
@@ -35,21 +37,24 @@ export class AuthService {
         } already exist`,
       );
 
-    const userDto = this.usersRepository.create({
+    const userDto = this.entityManager.create(User, {
       email: registerDto.email.toLowerCase(),
       username: registerDto.username.toLowerCase(),
       name: registerDto.name,
       password: registerDto.password,
     });
 
-    const newUser = this.usersRepository.save(userDto);
+    const newUser = this.entityManager.save(User, userDto);
     return newUser;
   }
 
   async validateUser(loginDto: LoginReqDto): Promise<any> {
-    const user = await this.usersRepository.findOne({
-      where: [{ email: loginDto.userSession }, { username: loginDto.userSession }],
-    });
+    const userQuery = this.entityManager.createQueryBuilder(User, 'user');
+
+    const user = await userQuery
+      .where('email = :email', { email: loginDto.userSession })
+      .orWhere('username = :username', { username: loginDto.userSession })
+      .getOne();
 
     const isMatch =
       user && (await this.bCryptHelper.comparePassword(loginDto.password, user.password));

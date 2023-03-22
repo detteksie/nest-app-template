@@ -6,6 +6,7 @@ import { DataSource, getConnectionOptions } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { User } from './entities/user.entity';
 import { JsonBodyMiddleware } from './middlewares/json-body.middleware';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { UsersModule } from './users/users.module';
@@ -41,6 +42,7 @@ import { UsersModule } from './users/users.module';
         return d;
       },
     }),
+    TypeOrmModule.forFeature([User]),
     AuthModule,
     UsersModule,
   ],

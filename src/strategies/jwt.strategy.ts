@@ -1,10 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
+import {
+  InjectDataSource,
+  // InjectRepository,
+} from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
+import {
+  DataSource,
+  //Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 
 interface Payload {
   sub: number;
@@ -23,8 +30,8 @@ const extractJwt = (configService: ConfigService) => {
   };
 };
 
-const validate = async (payload: Payload, usersRepository: Repository<User>) => {
-  const user = await usersRepository.findOneBy({ id: payload.sub });
+const validate = async (payload: Payload, userQuery: SelectQueryBuilder<User>) => {
+  const user = await userQuery.where('id = :id', { id: payload.sub }).getOne();
   if (payload?.signature !== user?.signature) return null;
   return user;
 };
@@ -32,15 +39,19 @@ const validate = async (payload: Payload, usersRepository: Repository<User>) => 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    // @InjectRepository(User)
+    // private readonly usersRepository: Repository<User>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     configService: ConfigService,
   ) {
     super(extractJwt(configService));
   }
 
   async validate(payload: Payload) {
-    const user = await validate(payload, this.usersRepository);
+    const userQuery = this.dataSource.createQueryBuilder(User, 'user');
+
+    const user = await validate(payload, userQuery);
     return user;
   }
 }
