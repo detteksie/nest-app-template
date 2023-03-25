@@ -1,0 +1,58 @@
+version: '3.4'
+
+services:
+  postgres:
+    image: postgres:12-alpine
+    restart: always
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nest-app
+    networks:
+      - net
+
+  adminer:
+    image: adminer:4.8.1
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    networks:
+      - net
+
+  server:
+    image: detteksie/nest-app-template
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: dev
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - adminer
+    working_dir: /app
+    ports:
+      - 4000:4000
+    command: [ "sh", "-c", "npm run start:dev" ]
+    networks:
+      - net
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/nest-app
+      JWT_SECRET: H3ll0W0rld!
+      THROTTLE_TTL: 60
+      THROTTLE_LIMIT: 10
+    stdin_open: true
+    tty: true
+
+volumes:
+  data:
+
+
+networks:
+  net:
