@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import {
   InjectDataSource,
   // InjectRepository,
 } from '@nestjs/typeorm';
+import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from 'src/constants/env.constant';
 import { User } from 'src/entities/user.entity';
 import {
   DataSource,
@@ -22,11 +24,12 @@ interface Payload {
   exp: Date;
 }
 
-const extractJwt = (configService: ConfigService) => {
+const extractJwt = (configService: ConfigService, secret: string) => {
   return {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     ignoreExpiration: false,
-    secretOrKey: configService.get<string>('JWT_SECRET'),
+    secretOrKey: configService.get<string>(secret),
+    passReqToCallback: true,
   };
 };
 
@@ -36,8 +39,11 @@ const validate = async (payload: Payload, userQuery: SelectQueryBuilder<User>) =
   return user;
 };
 
+// Access Token
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access') {
+  private readonly logger = new Logger(AccessTokenStrategy.name);
+
   constructor(
     // @InjectRepository(User)
     // private readonly usersRepository: Repository<User>,
@@ -45,10 +51,33 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly dataSource: DataSource,
     configService: ConfigService,
   ) {
-    super(extractJwt(configService));
+    super(extractJwt(configService, JWT_ACCESS_SECRET));
   }
 
-  async validate(payload: Payload) {
+  async validate(req: Request, payload: Payload) {
+    this.logger.debug(JSON.stringify(payload, null, 2), 'access-payload');
+    const userQuery = this.dataSource.createQueryBuilder(User, 'user');
+
+    const user = await validate(payload, userQuery);
+    return user;
+  }
+}
+
+// Refresh Token
+@Injectable()
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+  private readonly logger = new Logger(RefreshTokenStrategy.name);
+
+  constructor(
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+    configService: ConfigService,
+  ) {
+    super(extractJwt(configService, JWT_REFRESH_SECRET));
+  }
+
+  async validate(req: Request, payload: Payload) {
+    this.logger.debug(JSON.stringify(payload, null, 2), 'refresh-payload');
     const userQuery = this.dataSource.createQueryBuilder(User, 'user');
 
     const user = await validate(payload, userQuery);

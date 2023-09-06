@@ -1,16 +1,26 @@
-version: '3.4'
+version: "3.4"
 
 services:
   postgres:
-    image: postgres:12-alpine
-    restart: always
-    volumes:
-      - data:/var/lib/postgresql/data
+    image: postgres:14-alpine
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: nest-app
+      POSTGRES_DB: nest-app-template
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     networks:
       - net
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "sh -c 'pg_isready -U postgres -d postgres'"
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   adminer:
     image: adminer:4.8.1
@@ -18,7 +28,7 @@ services:
     depends_on:
       - postgres
     ports:
-      - 8080:8080
+      - ${ADMINER_PORT}:8080
     networks:
       - net
 
@@ -31,27 +41,22 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
-      - adminer
     working_dir: /app
     ports:
       - 4000:4000
-    command: [ "sh", "-c", "npm run start:dev" ]
-    networks:
-      - net
+    command: [ "sh", "-c", "npm run start:dev:hmr" ]
     volumes:
       - .:/app:delegated
       - /app/node_modules
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/nest-app
-      JWT_SECRET: H3ll0W0rld!
-      THROTTLE_TTL: 60
-      THROTTLE_LIMIT: 10
+    networks:
+      - net
+    env_file:
+      - .env
     stdin_open: true
     tty: true
 
 volumes:
-  data:
+  pgdata:
 
 
 networks:

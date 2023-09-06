@@ -4,8 +4,10 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { BCryptHelper } from 'src/utils/hash.helper';
 import { EntityManager } from 'typeorm';
-import { LoginReqDto } from './dto/login.req-dto';
-import { RegisterReqDto } from './dto/register.req-dto';
+import { LoginReqDto } from './dto/login-req.dto';
+import { RegisterReqDto } from './dto/register-req.dto';
+import { ConfigService } from '@nestjs/config';
+import { JWT_REFRESH_SECRET } from 'src/constants/env.constant';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
     private readonly entityManager: EntityManager,
     private readonly bCryptHelper: BCryptHelper,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async register(registerDto: RegisterReqDto): Promise<User> {
@@ -72,8 +75,16 @@ export class AuthService {
       email: user.email,
       signature: user.signature,
     };
+
+    const accessToken = this.jwtService.sign(payload);
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>(JWT_REFRESH_SECRET),
+      expiresIn: process.env.NODE_ENV === 'production' ? '30d' : '1h',
+    });
+
     return {
-      accessToken: this.jwtService.sign(payload),
+      accessToken,
+      refreshToken,
     };
   }
 }

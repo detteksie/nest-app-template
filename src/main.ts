@@ -11,29 +11,28 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false,
     cors: true,
-    logger: ['verbose', 'log', 'debug', 'warn', 'error'],
+    // logger: ['verbose', 'log', 'debug', 'warn', 'error'],
   });
 
   app.use(helmet(), compression());
-  app.enableVersioning({
-    type: VersioningType.URI,
-  });
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
     }),
   );
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Nest Application')
     .setDescription('Template for Nest Application')
-    .setVersion('0.0.1')
+    .setVersion('0.1.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('', app, document);
+  SwaggerModule.setup('/api', app, document);
 
   await app.listen(process.env.PORT || 4000);
 

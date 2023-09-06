@@ -19,6 +19,3 @@ quote_type = single
 
 [*.{env,env.local,env.*.local}]
 insert_final_newline = false
-
-[migrations/**/*.js]
-tab_width = 4

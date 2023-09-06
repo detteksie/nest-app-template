@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { User } from 'src/entities/user.entity';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
-import { UsernameResDto } from './dto/username.res-dto';
+import { UsernameResDto } from './dto/username-res.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('users')

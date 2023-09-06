@@ -10,6 +10,7 @@ import { User } from './entities/user.entity';
 import { JsonBodyMiddleware } from './middlewares/json-body.middleware';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { UsersModule } from './users/users.module';
+import { THROTTLE_LIMIT, THROTTLE_TTL } from './constants/env.constant';
 
 @Module({
   imports: [
@@ -23,8 +24,12 @@ import { UsersModule } from './users/users.module';
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
-        ttl: config.get<number>('THROTTLE_TTL') || 60,
-        limit: config.get<number>('THROTTLE_LIMIT') || 10,
+        throttlers: [
+          {
+            ttl: config.get<number>(THROTTLE_TTL) || 60,
+            limit: config.get<number>(THROTTLE_LIMIT) || 10,
+          },
+        ],
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -51,7 +56,10 @@ import { UsersModule } from './users/users.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JsonBodyMiddleware).forRoutes('*').apply(LoggerMiddleware).forRoutes({
+    // json
+    consumer.apply(JsonBodyMiddleware).forRoutes('*');
+    // logger
+    consumer.apply(LoggerMiddleware).forRoutes({
       path: '*',
       method: RequestMethod.ALL,
     });

@@ -1,10 +1,10 @@
-ARG IMAGE=node:16-alpine
+ARG IMAGE=node:18-alpine
 
 # Common
 FROM ${IMAGE} as builder
 WORKDIR /app
-COPY package*.json .
-RUN npm i
+COPY ["package.json", "yarn.lock", "./"]
+RUN yarn install
 COPY . .
 
 # Development
@@ -25,10 +25,11 @@ COPY --chown=node:node --from=prod-build ["/app/package.json", "/app/package-loc
 # COPY --chown=node:node --from=prod-build /app/.env /app/dist/.env
 
 ENV NODE_ENV=production
-ENV JWT_SECRET=H3ll0W0rld!
+ENV JWT_ACCESS_SECRET=N0t5oSecret
+ENV JWT_REFRESH_SECRET=N0t5oFre5h
 ENV THROTTLE_TTL=60
 ENV THROTTLE_LIMIT=10
-ENV DATABASE_URL=postgres://postgres:postgres@postgres:5432/nest-app
+ENV DATABASE_URL=postgres://postgres:postgres@postgres:5432/nest-app-template
 
 WORKDIR /app
 USER node

@@ -13,12 +13,12 @@ import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
-import { LoginReqDto } from './auth/dto/login.req-dto';
-import { LoginResDto } from './auth/dto/login.res-dto';
-import { ProfileResDto } from './auth/dto/profile.res-dto';
-import { RegisterReqDto } from './auth/dto/register.req-dto';
+import { LoginReqDto } from './auth/dto/login-req.dto';
+import { LoginResDto } from './auth/dto/login-res.dto';
+import { ProfileResDto } from './auth/dto/profile-res.dto';
+import { RegisterReqDto } from './auth/dto/register-req.dto';
 import { User } from './entities/user.entity';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtAuthGuard, RefreshAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Serialize } from './interceptors/serialize.interceptor';
 
@@ -47,6 +47,16 @@ export class AppController {
   @ApiBody({ type: LoginReqDto })
   @ApiResponse({ type: LoginResDto })
   async login(@Req() req: Request) {
+    this.logger.debug(JSON.stringify(req.user, null, 2), 'req.user');
+    return this.authService.login(req.user);
+  }
+
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RefreshAuthGuard)
+  @ApiBearerAuth()
+  @ApiResponse({ type: LoginResDto })
+  async refreshToken(@Req() req: Request) {
     return this.authService.login(req.user);
   }
 
