@@ -1,11 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
+import { IPaginationOptions, paginate } from 'src/utils/torm-paginate';
 import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async getUserList(options: IPaginationOptions) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+
+    try {
+      const queryBuilder = queryRunner.manager.createQueryBuilder(User, 'u');
+      return paginate<User>(queryBuilder, options);
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
   async getUserByUsername(username: string) {
     const userQuery = this.dataSource.createQueryBuilder(User, 'user');
