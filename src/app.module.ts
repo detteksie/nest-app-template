@@ -1,14 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
 import { JsonBodyMiddleware } from './middlewares/json-body.middleware';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { CoreModule } from './core.module';
 import { UsersModule } from './users/users.module';
-import { GlobalModule } from './global.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [GlobalModule, AuthModule, UsersModule],
+  imports: [CoreModule, AuthModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })

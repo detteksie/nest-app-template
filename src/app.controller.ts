@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
   Post,
+  Redirect,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -27,6 +28,12 @@ export class AppController {
   private readonly logger = new Logger(AppController.name);
 
   constructor(private readonly appService: AppService, private readonly authService: AuthService) {}
+
+  @Get()
+  @Redirect('/api', HttpStatus.PERMANENT_REDIRECT)
+  async index() {
+    return 'welcome';
+  }
 
   @Get('hello')
   @ApiResponse({ type: String })
