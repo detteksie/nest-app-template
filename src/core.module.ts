@@ -5,7 +5,14 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { redisStore } from 'cache-manager-ioredis-yet';
 import { DataSource, getConnectionOptions } from 'typeorm';
-import { CACHE_TTL, THROTTLE_LIMIT, THROTTLE_TTL } from './constants/env.constant';
+import {
+  CACHE_TTL,
+  REDIS_HOST,
+  REDIS_PASSWORD,
+  REDIS_PORT,
+  THROTTLE_LIMIT,
+  THROTTLE_TTL,
+} from './constants/env.constant';
 import { User } from './entities/user.entity';
 import { AccessTokenStrategy, RefreshTokenStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -42,8 +49,9 @@ import { BCryptHelper } from './utils/hash.helper';
           store(args) {
             console.log('CacheModule->store_args', args);
             return redisStore({
-              host: 'localhost',
-              port: 6379,
+              host: configService.get<string>(REDIS_HOST),
+              port: configService.get<number>(REDIS_PORT),
+              password: configService.get<string>(REDIS_PASSWORD),
               ttl: args.ttl,
             });
           },

@@ -1,8 +1,7 @@
-node_modules/*
-build/*
-.env
-.env.*
-.eslintcache
+# compiled output
+build/
+dist/
+node_modules/
 
 # Logs
 logs
@@ -15,3 +14,12 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# Others
+.eslintcache
+.env
+.env.*

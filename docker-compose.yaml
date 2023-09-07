@@ -3,6 +3,7 @@ version: "3.4"
 services:
   postgres:
     image: postgres:14-alpine
+    restart: on-failure
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: nest-app-template
@@ -32,6 +33,17 @@ services:
     networks:
       - net
 
+  redis:
+    image: redis:7.2-alpine
+    restart: on-failure
+    ports:
+      - ${REDIS_PORT}:6379
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redisdata:/data
+    networks:
+      - net
+
   server:
     image: detteksie/nest-app-template
     build:
@@ -41,6 +53,7 @@ services:
     restart: unless-stopped
     depends_on:
       - postgres
+      - redis
     working_dir: /app
     ports:
       - 4000:4000
@@ -57,6 +70,7 @@ services:
 
 volumes:
   pgdata:
+  redisdata:
 
 
 networks:
