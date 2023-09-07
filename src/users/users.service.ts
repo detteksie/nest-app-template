@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { IPaginationOptions, paginate } from 'src/utils/torm-paginate';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -24,8 +26,9 @@ export class UsersService {
   }
 
   async getUserByUsername(username: string) {
-    const userQuery = this.dataSource.createQueryBuilder(User, 'user');
-    const user = await userQuery.where('username = :username', { username }).getOne();
+    // const userQuery = this.dataSource.createQueryBuilder(User, 'user');
+    // const user = await userQuery.where('username = :username', { username }).getOne();
+    const user = await this.userRepository.findOne({ where: { username } });
     if (!user) throw new NotFoundException('User not found');
     return user;
   }

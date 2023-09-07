@@ -1,10 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import {
   InjectDataSource,
   // InjectRepository,
 } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from 'src/constants/env.constant';
@@ -33,8 +35,19 @@ const extractJwt = (configService: ConfigService, secret: string) => {
   };
 };
 
-const validate = async (payload: Payload, userQuery: SelectQueryBuilder<User>) => {
-  const user = await userQuery.where('id = :id', { id: payload.sub }).getOne();
+const validate = async (
+  payload: Payload,
+  userQuery: SelectQueryBuilder<User>,
+  cacheManager: Cache,
+) => {
+  const cacheKey = `user#${payload.sub}`;
+  let user: User = await cacheManager.get<User>(cacheKey);
+  if (!user) {
+    user = await userQuery.where('id = :id', { id: payload.sub }).getOne();
+    if (user) {
+      await cacheManager.set(cacheKey, user, 60 * 60 * 1000);
+    }
+  }
   if (payload?.signature !== user?.signature) return null;
   return user;
 };
@@ -49,6 +62,8 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access'
     // private readonly usersRepository: Repository<User>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
     configService: ConfigService,
   ) {
     super(extractJwt(configService, JWT_ACCESS_SECRET));
@@ -58,7 +73,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt-access'
     this.logger.debug(JSON.stringify(payload, null, 2), 'access-payload');
     const userQuery = this.dataSource.createQueryBuilder(User, 'user');
 
-    const user = await validate(payload, userQuery);
+    const user = await validate(payload, userQuery, this.cacheManager);
     return user;
   }
 }
@@ -71,6 +86,8 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
     configService: ConfigService,
   ) {
     super(extractJwt(configService, JWT_REFRESH_SECRET));
@@ -80,7 +97,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
     this.logger.debug(JSON.stringify(payload, null, 2), 'refresh-payload');
     const userQuery = this.dataSource.createQueryBuilder(User, 'user');
 
-    const user = await validate(payload, userQuery);
+    const user = await validate(payload, userQuery, this.cacheManager);
     return user;
   }
 }

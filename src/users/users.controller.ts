@@ -1,5 +1,6 @@
-import { Controller, Get, Param, UseGuards, Req, Query } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Req, Query, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Request } from 'express';
 import { User } from 'src/entities/user.entity';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -16,6 +17,7 @@ import { PaginationTypeEnum } from 'src/utils/torm-paginate';
   path: 'users',
   version: '1',
 })
+@UseInterceptors(CacheInterceptor)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

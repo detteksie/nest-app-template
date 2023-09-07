@@ -1,19 +1,23 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectEntityManager } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
+import { JWT_REFRESH_SECRET } from 'src/constants/env.constant';
 import { User } from 'src/entities/user.entity';
 import { BCryptHelper } from 'src/utils/hash.helper';
 import { EntityManager } from 'typeorm';
 import { LoginReqDto } from './dto/login-req.dto';
 import { RegisterReqDto } from './dto/register-req.dto';
-import { ConfigService } from '@nestjs/config';
-import { JWT_REFRESH_SECRET } from 'src/constants/env.constant';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectEntityManager()
     private readonly entityManager: EntityManager,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
     private readonly bCryptHelper: BCryptHelper,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -81,6 +85,13 @@ export class AuthService {
       secret: this.configService.get<string>(JWT_REFRESH_SECRET),
       expiresIn: process.env.NODE_ENV === 'production' ? '30d' : '1d',
     });
+
+    const cacheKey = `user#${user.id}`;
+    const cachedUser = await this.cacheManager.get(cacheKey);
+    if (cachedUser) {
+      await this.cacheManager.del(cacheKey);
+    }
+    await this.cacheManager.set(cacheKey, user, 60 * 60 * 1000);
 
     return {
       accessToken,

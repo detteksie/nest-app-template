@@ -3,3 +3,4 @@ export const JWT_ACCESS_SECRET = 'JWT_ACCESS_SECRET';
 export const JWT_REFRESH_SECRET = 'JWT_REFRESH_SECRET';
 export const THROTTLE_TTL = 'THROTTLE_TTL';
 export const THROTTLE_LIMIT = 'THROTTLE_LIMIT';
+export const CACHE_TTL = 'CACHE_TTL';
