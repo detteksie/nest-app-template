@@ -58,6 +58,30 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
+## Docker
+
+```bash
+# run docker-compose
+$ docker-compose up
+$ docker-compose down
+
+# run migration on docker-compose
+$ docker container exec -it <workdir_name_server> sh
+# docker container exec -it nest-app-template-server-1 sh
+$ npm run migration:run # for migrating
+# npm run migration:revert # for reverting
+
+
+# build image
+$ docker build . --target prod -t <image_name>:<image_version>
+# docker build . --target prod -t detteksie/nest-app-template:1
+
+# run container
+$ docker-compose up postgres # run postgres database from docker-compose.yaml
+$ docker container run --network <workdir_network> -p 4000:4000 --name <your_container_name> -it <image_name>
+# docker container run --network nest-app-template_net -p 4000:4000 --name nestapp -it detteksie/nest-app-template:1
+```
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

@@ -3,6 +3,19 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "typeCheck": true,
+    "webpack": true
+  },
+  "projects": {
+    "typeorm-paginate": {
+      "type": "library",
+      "root": "libs/typeorm-paginate",
+      "entryFile": "index",
+      "sourceRoot": "libs/typeorm-paginate/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/typeorm-paginate/tsconfig.lib.json"
+      }
+    }
   }
 }
