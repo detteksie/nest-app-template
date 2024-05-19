@@ -2,13 +2,14 @@ import { CacheOptions, CacheOptionsFactory } from '@nestjs/cache-manager';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { redisStore } from 'cache-manager-ioredis-yet';
+
 import {
   CACHE_TTL,
   REDIS_HOST,
   // REDIS_PASSWORD,
   // REDIS_PORT,
-} from '~/constants/env.constant';
-// import { jsonStringify } from '~/utils/json-stringify.util';
+} from '|/constants/env.constant';
+// import { jsonStringify } from '|/utils/json-stringify.util';
 
 @Injectable()
 export class CacheManagerConfig implements CacheOptionsFactory {

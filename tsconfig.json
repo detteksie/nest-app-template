@@ -22,8 +22,8 @@
     "allowJs": true,
     "resolveJsonModule": true,
     "paths": {
-      "~": ["src"],
-      "~/*": ["src/*"],
+      "|": ["src"],
+      "|/*": ["src/*"],
       "@app/typeorm-paginate": ["libs/typeorm-paginate/src"],
       "@app/typeorm-paginate/*": ["libs/typeorm-paginate/src/*"]
     }

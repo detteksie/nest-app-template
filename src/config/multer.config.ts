@@ -2,7 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MulterOptionsFactory } from '@nestjs/platform-express';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
-import { MULTER_DEST } from '~/constants/env.constant';
+
+import { MULTER_DEST } from '|/constants/env.constant';
 
 @Injectable()
 export class MulterConfig implements MulterOptionsFactory {

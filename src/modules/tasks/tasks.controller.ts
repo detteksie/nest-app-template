@@ -1,21 +1,23 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  Req,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { ObjectId } from 'mongodb';
-import { JwtAuthGuard } from '~/guards/jwt-auth.guard';
-import { ParseObjectIdPipe } from '~/pipes/parse-object-id.pipe';
-import { PaginationQuery, PaginationQueryPipe } from '~/utils/pagination-query.util';
+
+import { JwtAuthGuard } from '|/guards/jwt-auth.guard';
+import { ParseObjectIdPipe } from '|/pipes/parse-object-id.pipe';
+import { PaginationQuery, PaginationQueryPipe } from '|/utils/pagination-query.util';
+
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TasksService } from './tasks.service';

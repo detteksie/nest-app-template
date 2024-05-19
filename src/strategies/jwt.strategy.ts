@@ -1,5 +1,5 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import {
@@ -14,9 +14,10 @@ import {
   //Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '~/constants/env.constant';
-import { User } from '~/entities/user.entity';
-// import { jsonStringify } from '~/utils/json-stringify.util';
+
+import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '|/constants/env.constant';
+import { User } from '|/entities/user.entity';
+// import { jsonStringify } from '|/utils/json-stringify.util';
 
 interface Payload {
   sub: number;

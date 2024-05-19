@@ -1,8 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
 import { readFile, unlink } from 'fs/promises';
 import path from 'path';
-import { jsonStringify } from '~/utils/json-stringify.util';
-// import { S3Service } from '~/utils/s3-service.helper';
+
+import { Injectable, Logger } from '@nestjs/common';
+
+import { jsonStringify } from '|/utils/json-stringify.util';
+
+// import { S3Service } from '|/utils/s3-service.helper';
 import { UploadMultipleFilesDto } from './dto/upload.dto';
 
 @Injectable()
@@ -26,9 +29,10 @@ export class UploadsService {
         result = file;
       }
       return result;
-    } catch (err) {
-      throw err;
     } finally {
+      // catch (err) {
+      //   throw err;
+      // }
       if (result instanceof Buffer) {
         const sto = setTimeout(
           async () => {
@@ -57,9 +61,10 @@ export class UploadsService {
         }
       });
       return result;
-    } catch (err) {
-      throw err;
     } finally {
+      // catch (err) {
+      //   throw err;
+      // }
       const unlinks: Promise<void>[] = [];
       const sto = setTimeout(
         async () => {
@@ -99,9 +104,10 @@ export class UploadsService {
         });
       });
       return result;
-    } catch (err) {
-      throw err;
     } finally {
+      // catch (err) {
+      //   throw err;
+      // }
       const unlinks: Promise<void>[] = [];
       const sto = setTimeout(
         async () => {

@@ -3,10 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BEARER } from '~/constants/config.constant';
-import { JWT_REFRESH_SECRET } from '~/constants/env.constant';
-import { User } from '~/entities/user.entity';
-import { comparePassword } from '~/utils/bcrypt.util';
+
+import { BEARER } from '|/constants/config.constant';
+import { JWT_REFRESH_SECRET } from '|/constants/env.constant';
+import { User } from '|/entities/user.entity';
+import { comparePassword } from '|/utils/bcrypt.util';
+
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 

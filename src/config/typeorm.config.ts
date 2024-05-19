@@ -6,7 +6,7 @@ import {
   TypeOrmOptionsFactory,
 } from '@nestjs/typeorm';
 import { DataSource, getConnectionOptions } from 'typeorm';
-// import { jsonStringify } from '~/utils/json-stringify.util';
+// import { jsonStringify } from '|/utils/json-stringify.util';
 
 let dataSource: DataSource = null;
 

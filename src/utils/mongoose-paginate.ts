@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 import {
   IPaginationLinks,
   IPaginationMeta,
@@ -7,7 +9,6 @@ import {
   Pagination,
   TypeORMCacheType,
 } from '@app/typeorm-paginate';
-import mongoose from 'mongoose';
 
 export async function mongoosePaginate<T, U>(
   query: mongoose.Query<T[], U>,

@@ -1,18 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Query,
+  Get,
+  Param,
   ParseIntPipe,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { User } from '~/entities/user.entity';
-import { Serialize } from '~/interceptors/serialize.interceptor';
-import { PaginationQuery, PaginationQueryPipe } from '~/utils/pagination-query.util';
+
+import { User } from '|/entities/user.entity';
+import { Serialize } from '|/interceptors/serialize.interceptor';
+import { PaginationQuery, PaginationQueryPipe } from '|/utils/pagination-query.util';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsernameResponse } from './dto/username.dto';

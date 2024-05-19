@@ -1,8 +1,10 @@
-import { IPaginationOptions, paginate } from '@app/typeorm-paginate';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { User } from '~/entities/user.entity';
+
+import { IPaginationOptions, paginate } from '@app/typeorm-paginate';
+import { User } from '|/entities/user.entity';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 

@@ -1,11 +1,13 @@
-import { IPaginationOptions } from '@app/typeorm-paginate';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
-import { User } from '~/entities/user.entity';
-import { Todo, TodoDocument } from '~/schemas/todo.schema';
-import { mongoosePaginate } from '~/utils/mongoose-paginate';
+
+import { IPaginationOptions } from '@app/typeorm-paginate';
+import { User } from '|/entities/user.entity';
+import { Todo, TodoDocument } from '|/schemas/todo.schema';
+import { mongoosePaginate } from '|/utils/mongoose-paginate';
+
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 

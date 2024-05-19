@@ -10,7 +10,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { hashPassword } from '~/utils/bcrypt.util';
+
+import { hashPassword } from '|/utils/bcrypt.util';
 
 @Entity()
 export class User {

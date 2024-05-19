@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ThrottlerModuleOptions, ThrottlerOptionsFactory } from '@nestjs/throttler';
-import { THROTTLE_LIMIT, THROTTLE_TTL } from '~/constants/env.constant';
-// import { jsonStringify } from '~/utils/json-stringify.util';
+
+import { THROTTLE_LIMIT, THROTTLE_TTL } from '|/constants/env.constant';
+// import { jsonStringify } from '|/utils/json-stringify.util';
 
 @Injectable()
 export class ThrottlerConfig implements ThrottlerOptionsFactory {

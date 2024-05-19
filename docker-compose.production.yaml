@@ -1,5 +1,3 @@
-version: "3.4"
-
 name: nestapp
 
 services:
@@ -58,10 +56,11 @@ services:
       - net
 
   server:
-    image: detteksie/nest-app-template
+    image: detteksie/nest-app-template:prod
     build:
       context: .
       dockerfile: ./Dockerfile
+      target: prod
     restart: unless-stopped
     depends_on:
       - postgres
